@@ -1,6 +1,6 @@
-import { JWT } from 'google-auth-library';
-import { GoogleSpreadsheet } from 'google-spreadsheet';
-import { createHash } from 'crypto';
+const { JWT } = require('google-auth-library');
+const { GoogleSpreadsheet } = require('google-spreadsheet');
+const { createHash } = require('crypto');
 
 // --- Helper Functions ---
 const hashPassword = (password) => {
@@ -8,6 +8,10 @@ const hashPassword = (password) => {
 };
 
 const getDoc = async () => {
+  // Ensure environment variables are loaded
+  if (!process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL || !process.env.GOOGLE_PRIVATE_KEY || !process.env.GOOGLE_SHEET_ID) {
+    throw new Error("Missing Google credentials in environment variables.");
+  }
   const serviceAccountAuth = new JWT({
     email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
     key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
@@ -18,12 +22,11 @@ const getDoc = async () => {
   return doc;
 };
 
-
 // --- Main Handler for Vercel ---
-export default async function handler(request, response) {
+module.exports = async (request, response) => {
   // --- CORS Headers ---
   response.setHeader('Access-Control-Allow-Credentials', true);
-  response.setHeader('Access-Control-Allow-Origin', '*'); // Or your specific domain
+  response.setHeader('Access-Control-Allow-Origin', '*');
   response.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   response.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
@@ -40,17 +43,16 @@ export default async function handler(request, response) {
     switch (action) {
       case 'verifyLogin': {
         const userSheet = doc.sheetsByTitle['users'];
+        await userSheet.loadHeaderRow(); // Ensure headers are loaded
         const rows = await userSheet.getRows();
         const inputPasswordHash = hashPassword(data.password);
 
         for (const row of rows) {
           if (row.get('username') === data.username && row.get('hashed_password') === inputPasswordHash) {
-            // Log success (can be added later)
             return response.status(200).json({ status: 'success', displayName: row.get('display_name') });
           }
         }
         
-        // Log failure (can be added later)
         return response.status(200).json({ status: 'error', message: 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง' });
       }
       
@@ -60,7 +62,7 @@ export default async function handler(request, response) {
         return response.status(400).json({ status: 'error', message: 'Invalid action' });
     }
   } catch (error) {
-    console.error(error);
+    console.error("Handler Error:", error);
     return response.status(500).json({ status: 'error', message: 'Server Error: ' + error.message });
   }
-}
+};
