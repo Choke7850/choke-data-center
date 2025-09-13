@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choke's Portfolio & Game</title>
+    <link rel="icon" type="image/png" href="https://www.dochord.com/wp-content/uploads/2017/06/LOSO-rock-and-roll-150x150.jpg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body{font-family:'Kanit',sans-serif;background-color:#0a192f;color:#ccd6f6;overflow-x:hidden;position:relative}.glass-card{background:rgba(23,49,92,0.5);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.1);transition:all 0.3s ease}.glass-card-hover:hover{transform:translateY(-5px);box-shadow:0 8px 30px rgba(0,191,255,0.2)}.nav-link{transition:all 0.3s ease}.nav-link.active,.nav-link:hover{color:#64ffda;background-color:rgba(100,255,218,0.1)}.fade-in{animation:fadeInAnimation 1s ease-in forwards}@keyframes fadeInAnimation{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}#welcome-page{position:fixed;top:0;left:0;width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;z-index:1000}.login-container{z-index:10;width:min(400px,90vw)}.input-group{position:relative;margin-bottom:25px}.password-input,.username-input{width:100%;border:none;border-bottom:2px solid #64ffda;background:transparent;padding:10px 40px 10px 5px;font-size:18px;color:#64ffda;outline:none}.password-input::placeholder,.username-input::placeholder{color:transparent}.input-group label{position:absolute;top:10px;left:5px;font-size:18px;color:#ccd6f6;pointer-events:none;transition:all 0.3s ease}.password-input:focus~label,.password-input:not(:placeholder-shown)~label,.username-input:focus~label,.username-input:not(:placeholder-shown)~label{top:-16px;left:0;font-size:14px;font-weight:700;color:#64ffda}.toggle-password{position:absolute;right:5px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;padding:5px}.toggle-password svg{width:22px;height:22px;fill:#ccd6f6;opacity:0.7}.toggle-password .eye-closed{display:none}.toggle-password.visible .eye-open{display:none}.toggle-password.visible .eye-closed{display:block}.form-button{background-color:#64ffda;color:#0a192f}.form-button:disabled{background-color:#555;color:#999;cursor:not-allowed}#message-area,#data-message-area,#change-pass-message-area{min-height:48px;font-weight:700;color:#ccd6f6;transition:color 0.3s ease;line-height:1.5}.modal{position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(10,25,47,0.7);backdrop-filter:blur(5px);display:none;align-items:center;justify-content:center;z-index:2000;opacity:0;transition:opacity 0.3s ease}.modal.active{display:flex;opacity:1}#home-music-toggle-btn svg{width:24px;height:24px;fill:#64ffda}#star-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;pointer-events:none}#main-content{position:relative;z-index:1;transition:transform 0.3s ease-in-out}#sidebar-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,0.5);z-index:1999;opacity:0;transition:opacity 0.3s ease-in-out;pointer-events:none}#sidebar-overlay.active{opacity:1;pointer-events:auto}#mobile-menu{position:fixed;top:0;right:-280px;width:280px;height:100%;background-color:#112240;z-index:2000;transition:transform 0.3s ease-in-out;box-shadow:-10px 0 30px -15px rgba(2,12,27,0.7);display:flex;flex-direction:column}#mobile-menu.active{transform:translateX(-280px)}#report-problem-link{margin-top:auto}.misc-card-icon{stroke:#64ffda;width:48px;height:48px;margin-bottom:1rem;transition:all 0.3s ease}.misc-card:hover .misc-card-icon{filter:drop-shadow(0 0 10px #64ffda);transform:scale(1.1)}#game-canvas{background-color:#0f172a;border-radius:8px;border:2px solid #64ffda;width:100%;height:100%}.game-controls .arr{cursor:pointer;width:60px;height:60px;background:rgba(100,255,218,0.1);border:1px solid rgba(100,255,218,0.5);color:#64ffda;display:inline-flex;align-items:center;justify-content:center;margin:4px;border-radius:8px;transition:all .15s ease;user-select:none}.game-controls .arr:active{background:rgba(100,255,218,0.3);transform:scale(0.95)}.game-controls .chevron{display:block}.game-controls .chevron::before{border-style:solid;border-color:#64ffda;border-width:4px 4px 0 0;content:'';display:inline-block;height:16px;width:16px;transform:rotate(-45deg)}.game-controls .chevron.down::before{transform:rotate(135deg)}.game-controls .chevron.right::before{transform:rotate(45deg)}.game-controls .chevron.left::before{transform:rotate(-135deg)}
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <canvas id="star-canvas"></canvas>
+
+    <div style="position: absolute; top: -9999px; left: -9999px;">
+        <div id="login-player"></div>
+        <div id="main-player"></div>
+    </div>
+
+    <div id="welcome-page">
+        <div class="login-container glass-card p-8 rounded-lg text-center">
+            <div id="welcome-back-content" class="hidden">
+                <h1 class="text-3xl font-bold text-cyan-300 mb-4">Welcome Back ❗️</h1>
+                <p class="text-slate-300 mb-2">เข้าสู่ระบบในชื่อ:</p>
+                <p id="welcome-back-username" class="text-xl font-semibold text-white mb-8 truncate"></p>
+                <button onclick="enterMainSite()" class="w-full form-button font-bold py-3 px-8 rounded-lg text-lg transition-transform duration-300 hover:scale-105">
+                    เข้าสู่เว็บไซต์
+                </button>
+                <button onclick="switchAccount()" class="w-full mt-4 text-cyan-300 hover:text-cyan-100 text-sm">
+                    ไม่ใช่บัญชีนี้?
+                </button>
+            </div>
+            <div id="welcome-content-login" class="hidden">
+                 <h1 class="text-3xl font-bold text-cyan-300 mb-6">กรุณาเข้าสู่ระบบ</h1>
+                 <div class="input-group">
+                    <input type="text" id="main-username-input" class="username-input" required placeholder=" " autocomplete="username">
+                    <label for="main-username-input">ชื่อผู้ใช้</label>
+                 </div>
+                 <div class="input-group">
+                    <input type="password" id="main-password-input" class="password-input" required placeholder=" " autocomplete="current-password">
+                    <button type="button" id="main-toggle-password" class="toggle-password" aria-label="Show password">
+                        <svg class="eye-open" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"></path></svg>
+                        <svg class="eye-closed" viewBox="0 0 24 24"><path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.3 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"></path></svg>
+                    </button>
+                
+                    <label for="main-password-input">*รหัสผ่าน</label>
+                 </div>
+                 <p id="message-area" class="my-4"></p>
+                 <button id="main-submit-button" class="w-full form-button font-bold py-3 px-8 rounded-lg text-lg transition-transform duration-300 hover:scale-105">
+                    Login
+                 </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="data-login-modal" class="modal">
+        <div class="login-container glass-card p-8 rounded-lg text-center">
+             <h1 id="data-login-title" class="text-2xl font-bold text-cyan-300 mb-6"></h1>
+             <div class="input-group">
+                <input type="text" id="data-username-input" class="username-input" required placeholder=" " autocomplete="username">
+                <label for="data-username-input">ชื่อผู้ใช้</label>
+             </div>
+             <div class="input-group">
+                <input type="password" id="data-password-input" class="password-input" required placeholder=" " autocomplete="current-password">
+                <button type="button" id="data-toggle-password" class="toggle-password" aria-label="Show password">
+                    <svg class="eye-open" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"></path></svg>
+                    <svg class="eye-closed" viewBox="0 0 24 24"><path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.3 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"></path></svg>
+                </button>
+                <label for="data-password-input">รหัสผ่าน</label>
+             </div>
+             <p id="data-message-area" class="my-4"></p>
+             <div class="flex gap-4">
+                <button onclick="hideModal('data-login-modal')" class="w-full bg-red-500 text-white font-bold py-2 px-4 rounded-lg">ยกเลิก</button>
+                <button id="data-submit-button" class="w-full form-button font-bold py-2 px-4 rounded-lg">ยืนยัน</button>
+             </div>
+        </div>
+    </div>
+    
+    <div id="change-password-modal" class="modal">
+        <div class="login-container glass-card p-8 rounded-lg">
+            <h1 class="text-2xl font-bold text-cyan-300 mb-6 text-center">เปลี่ยนรหัสผ่าน</h1>
+            <div class="input-group">
+                <input type="password" id="current-password-input" class="password-input" required placeholder=" " autocomplete="current-password">
+                <label for="current-password-input">รหัสผ่านปัจจุบัน</label>
+            </div>
+            <div class="input-group">
+                <input type="password" id="new-password-input" class="password-input" required placeholder=" " autocomplete="new-password">
+                <label for="new-password-input">รหัสผ่านใหม่</label>
+            </div>
+            <div class="input-group">
+                <input type="password" id="confirm-password-input" class="password-input" required placeholder=" " autocomplete="new-password">
+                <label for="confirm-password-input">ยืนยันรหัสผ่านใหม่</label>
+            </div>
+            <div class="text-xs text-slate-400 space-y-1 mb-4">
+                <p id="pass-val-length">รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร</p>
+                <p id="pass-val-letter">ต้องมีตัวอักษรภาษาอังกฤษอย่างน้อย 2 ตัว</p>
+                <p id="pass-val-match">รหัสผ่านใหม่ต้องตรงกัน</p>
+            </div>
+            <p id="change-pass-message-area" class="my-4 text-center"></p>
+            <div class="flex gap-4">
+                <button onclick="hideModal('change-password-modal')" class="w-full bg-slate-600 text-white font-bold py-2 px-4 rounded-lg">ยกเลิก</button>
+                <button id="change-pass-submit-button" class="w-full form-button font-bold py-2 px-4 rounded-lg">ยืนยัน</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="main-content" class="hidden">
+        <header class="sticky top-0 z-50 glass-card shadow-lg">
+             <nav class="container mx-auto px-4 py-3 flex justify-between items-center">
+                <div class="flex items-center gap-4">
+                    <button onclick="showPage('home')" class="text-2xl font-bold text-cyan-300 cursor-pointer">CHOKE</button>
+                    <div id="user-display-header" class="hidden md:block text-cyan-200"></div>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-1 md:space-x-2 text-sm md:text-base">
+                    <button onclick="showPage('home')" class="nav-link active px-3 py-2 rounded-md">หน้าแรก</button>
+                    <button onclick="showPage('links')" class="nav-link px-3 py-2 rounded-md">รวมลิงก์</button>
+                    <button onclick="showPage('data')" class="nav-link px-3 py-2 rounded-md">DATA Center</button>
+                    <button onclick="showPage('search')" class="nav-link px-3 py-2 rounded-md">ค้นหาข้อมูล</button>
+                    <button onclick="showPage('game')" class="nav-link px-3 py-2 rounded-md">เกมงู 🐍</button>
+                    <button onclick="showPage('misc')" class="nav-link px-3 py-2 rounded-md">อื่นๆ</button>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <div id="session-timer" class="text-sm font-mono text-red-400 border border-red-500/50 bg-red-500/10 px-2 py-1 rounded-md hidden lg:block"></div>
+                    <button onclick="logout()" class="hidden md:block bg-red-600/80 text-white hover:bg-red-500/80 px-4 py-2 rounded-md text-sm font-bold">Logout</button>
+                    <button id="hamburger-btn" class="md:hidden p-2 rounded-md hover:bg-cyan-500/20">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-cyan-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                        </svg>
+                    </button>
+                </div>
+            </nav>
+        </header>
+
+        <main class="container mx-auto p-4 md:p-8">
+            <section id="home" class="page-content">
+                <div class="glass-card glass-card-hover rounded-lg p-8 text-center fade-in mb-8">
+                    <h1 class="text-4xl font-bold text-green-400 mb-4">สวัสดีกันด้วยละกันนะครับผม</h1>
+                    <h2 class="text-2xl text-slate-300 mb-2">ผมชื่อ Choke นะครับผม</h2>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="glass-card glass-card-hover rounded-lg p-6"><img src="https://miro.medium.com/v2/resize:fit:1100/format:webp/0*df0ScsWcIL32uwwj.png" alt="Developer Life" class="rounded-lg w-full h-full object-cover"></div>
+                    <div class="glass-card glass-card-hover rounded-lg p-6 text-center flex items-center justify-center"><p class="text-3xl font-semibold text-red-500 animate-pulse">"สภาพกูไม่ไหว"</p><p class="mt-4 text-2xl text-slate-300">ปวดหลังจัด</p></div>
+                </div>
+                <div class="mt-12 text-center">
+                    <button onclick="toggleMusic()" id="home-music-toggle-btn" class="glass-card-hover inline-flex items-center gap-3 px-6 py-3 rounded-lg bg-cyan-600/50 hover:bg-cyan-500/50 transition-colors">
+                        <svg id="home-volume-up-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6 fill-cyan-300"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"></path></svg>
+                        <svg id="home-volume-off-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="hidden w-6 h-6 fill-cyan-300"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"></path></svg>
+                        <span id="music-status-text" class="text-cyan-200 font-semibold">ปิดเสียง</span>
+                    </button>
+                </div>
+            </section>
+
+            <section id="links" class="page-content hidden">
+                <div class="glass-card rounded-lg p-8 fade-in">
+                    <h2 class="text-3xl font-bold text-center mb-8 text-cyan-300">ช่องทางการติดตาม</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <a href="https://youtube.com/@diy_and_repair?si=sfkWRTUQuQwE6aZR" target="_blank" class="glass-card glass-card-hover p-4 flex items-center gap-4 rounded-lg">
+                            <span class="text-2xl">🔧</span>
+                            <span class="font-semibold">YouTube งานช่าง NO.1</span>
+                        </a>
+                        <a href="https://youtube.com/@Choke_Gaming-gh7vb?si=APhlwR1uOEfjxbZC" target="_blank" class="glass-card glass-card-hover p-4 flex items-center gap-4 rounded-lg">
+                            <span class="text-2xl">🎮</span>
+                            <span class="font-semibold">YouTube Choke_Gaming</span>
+                        </a>
+                        <a href="https://www.facebook.com/profile.php?id=100046741758855&mibextid=ZbWKwLif" target="_blank" class="glass-card glass-card-hover p-4 flex items-center gap-4 rounded-lg">
+                            <span class="text-2xl">📘</span>
+                            <span class="font-semibold">Facebook เอ้า โชคอีกแล้วหรอ</span>
+                        </a>
+                        <a href="https://www.facebook.com/profile.php?id=100083053197326" target="_blank" class="glass-card glass-card-hover p-4 flex items-center gap-4 rounded-lg">
+                             <span class="text-2xl">📘</span>
+                            <span class="font-semibold">Facebook รอง</span>
+                        </a>
+                        <a href="https://www.instagram.com/choke_7850?igsh=MWFtYXUzMTB4ejZoaw=" target="_blank" class="glass-card glass-card-hover p-4 flex items-center gap-4 rounded-lg">
+                            <span class="text-2xl">📸</span>
+                            <span class="font-semibold">IG</span>
+                        </a>
+                        <a href="https://www.tiktok.com/@diy_and_repair?_t=8m9gy2YKtve&_r=1" target="_blank" class="glass-card glass-card-hover p-4 flex items-center gap-4 rounded-lg">
+                            <span class="text-2xl">🎵</span>
+                            <span class="font-semibold">Tik Tok</span>
+                        </a>
+                        <a href="https://github.com/Choke7850" target="_blank" class="glass-card glass-card-hover p-4 flex items-center gap-4 rounded-lg">
+                            <span class="text-2xl">💻</span>
+                            <span class="font-semibold">Github</span>
+                        </a>
+                        <a href="https://discord.com/invite/Eg6V5Eda" target="_blank" class="glass-card glass-card-hover p-4 flex items-center gap-4 rounded-lg">
+                            <span class="text-2xl">💬</span>
+                            <span class="font-semibold">Discord</span>
+                        </a>
+                         <a href="https://join.slack.com/t/chokeworkspace/shared_invite/zt-2id5raam9-4jlnJMEC2LDTvpWS8v3Bog" target="_blank" class="glass-card glass-card-hover p-4 flex items-center gap-4 rounded-lg">
+                            <span class="text-2xl">🚀</span>
+                            <span class="font-semibold">Slack</span>
+                        </a>
+                        <a href="https://drive.google.com/drive/folders/17IXYCIKlJGs_nYNvxNOIcEOn7nE4b-CJ" target="_blank" class="glass-card glass-card-hover p-4 flex items-center gap-4 rounded-lg">
+                            <span class="text-2xl">📂</span>
+                           <span class="font-semibold">แชร์ไฟล์</span>
+                        </a>
+                         <a href="https://ffshare.garena.com/?region=TH&lang=th" target="_blank" class="glass-card glass-card-hover p-4 flex items-center gap-4 rounded-lg">
+                            <span class="text-2xl">🔥</span>
+                            <span class="font-semibold">เกม ฟีฟาย</span>
+                        </a>
+                         <a href="https://tmn.app.link/vAiCchstqJb" target="_blank" class="w-full sm:col-span-2 lg:col-span-3 text-center glass-card glass-card-hover p-4 rounded-lg bg-yellow-500/20 border-yellow-400 font-bold text-xl text-yellow-300">
+                            💰 โอนตังมา 💰
+                        </a>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="data" class="page-content hidden"></section>
+
+            <section id="search" class="page-content hidden"></section>
+            
+            <section id="game" class="page-content hidden">
+                <div class="glass-card rounded-lg p-4 md:p-8 text-center fade-in">
+                    <h2 class="text-3xl font-bold text-cyan-300 mb-2">Snake</h2>
+                    <div id="game-stats" class="flex justify-around items-center text-center my-4 p-2 glass-card rounded-md text-xs sm:text-base">
+                        <div>
+                            <h3 class="font-bold text-cyan-300">คะแนนสูงสุด</h3>
+                            <p id="high-score-display" class="font-mono">0</p>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-cyan-300">เล่น</h3>
+                            <p id="plays-display" class="font-mono">0</p>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-cyan-300">แพ้</h3>
+                            <p id="losses-display" class="font-mono">0</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-center items-center flex-col">
+                        <div class="relative w-full max-w-[400px] aspect-square mx-auto">
+                            <canvas id="game-canvas" width="400" height="400"></canvas>
+                        </div>
+                        <div class="game-controls mt-4 text-center">
+                          <a class="arr" onclick="game.action('up')"><i class="chevron up"></i></a><br>
+                          <a class="arr" onclick="game.action('left')"><i class="chevron left"></i></a>
+                          <a class="arr" onclick="game.action('down')"><i class="chevron down"></i></a>
+                          <a class="arr" onclick="game.action('right')"><i class="chevron right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="misc" class="page-content hidden">
+                 <div class="glass-card rounded-lg p-8 fade-in">
+                    <button id="misc-back-button" onclick="hideMiscSubpages()" class="hidden mb-6 inline-flex items-center gap-2 px-4 py-2 bg-cyan-600/50 hover:bg-cyan-500/50 rounded-lg transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M11.03 3.97a.75.75 0 010 1.06l-6.22 6.22H21a.75.75 0 010 1.5H4.81l6.22 6.22a.75.75 0 11-1.06 1.06l-7.5-7.5a.75.75 0 010-1.06l7.5-7.5a.75.75 0 011.06 0z" clip-rule="evenodd" /></svg>
+                      ย้อนกลับ
+                    </button>
+                    
+                    <div id="misc-main-grid">
+                        <h2 class="text-3xl font-bold text-center mb-8 text-cyan-300">ฟอรั่มอื่นๆ</h2>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div onclick="showMiscSubpage('misc-subpage-video')" class="misc-card cursor-pointer glass-card glass-card-hover rounded-lg p-6 text-center flex flex-col items-center justify-center">
+                                <svg class="misc-card-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.91 11.672a.375.375 0 010 .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.286.358-.457.557-.327l5.603 3.112z" /><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 15.75l-1.313 1.313m2.626-2.626l1.313-1.313M3 12a9 9 0 1118 0 9 9 0 01-18 0z" /></svg>
+                                <p class="text-xl font-semibold text-slate-300">วีดีโอแนะนำ</p>
+                            </div>
+                            <div onclick="showMiscSubpage('misc-subpage-browser')" class="misc-card cursor-pointer glass-card glass-card-hover rounded-lg p-6 text-center flex flex-col items-center justify-center">
+                                <svg class="misc-card-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c.34 0 .672-.023 1-.065M12 21c-.34 0-.672-.023-1-.065m2 0a9.008 9.008 0 006.716-3.234M11 3.065a9.008 9.008 0 016.716 3.234m0 0a9.004 9.004 0 00-8.716 4.49M3.284 9.766a9.004 9.004 0 008.716 4.49m0 0a9.004 9.004 0 01-8.716-4.49M12 3c.34 0 .672-.023 1 .065m-2 0a9.008 9.008 0 01-6.716 3.234m0 0a9.004 9.004 0 018.716-4.49" /></svg>
+                                <p class="text-xl font-semibold text-slate-300">Browser ภายนอก</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="misc-subpage-video" class="misc-subpage hidden">
+                        <div class="glass-card p-6 rounded-lg">
+                             <h3 class="text-2xl font-bold text-center mb-4 text-cyan-300">วีดีโอแนะนำ</h3>
+                             <p class="text-center text-slate-400 mb-6">นี่คือวิดีโอตัวอย่างที่แสดงผลในหน้านี้</p>
+                             <div class="aspect-w-16 aspect-h-9 bg-black rounded-md"><video id="misc-subpage-video-player" class="w-full h-full rounded-md" controls><source src="https://cdn.pixabay.com/video/2018/03/31/15299-262921851_large.mp4" type="video/mp4"></video></div>
+                        </div>
+                    </div>
+
+                    <div id="misc-subpage-browser" class="misc-subpage hidden">
+                        <div class="glass-card p-6 rounded-lg">
+                            <h3 class="text-2xl font-bold text-center mb-6 text-cyan-300">Browser ภายนอก</h3>
+                            <div class="space-y-4">
+                                <a href="https://google.com" target="_blank" class="glass-card glass-card-hover p-4 flex items-center space-x-4 rounded-lg">
+                                    <svg class="w-10 h-10" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>Google</title><path fill="#4285F4" d="M21.54 10.95c.1.55.16 1.1.16 1.65 0 1.95-.54 3.9-1.6 5.59-1.09 1.73-2.69 3-4.57 3.86-1.85.86-3.92 1.09-5.94.75-2.06-.35-3.95-1.26-5.4-2.7-1.45-1.45-2.36-3.34-2.7-5.4s-.11-4.09.75-5.94c.86-1.88 2.13-3.48 3.86-4.57s3.83-1.7 5.75-1.6c1.65 0 3.3.6 4.6 1.7l-3.23 3.23c-.5-.5-.9-.6-1.37-.6-1.4 0-2.8.96-3.4 2.36-.6 1.4-.3 3.1.75 4.2.5.55 1.15.9 1.9.9s1.4-.35 1.9-.9c.6-.6.9-1.35.9-2.2H12v-4h9.54z"/></svg>
+                                    <div><p class="font-semibold text-lg">Google.com</p><p class="text-sm text-slate-400">ค้นหาสิ่งที่คุณต้องการ</p></div>
+                                </a>
+                                 <a href="https://x.com/choke16614?s=09" target="_blank" class="glass-card glass-card-hover p-4 flex items-center space-x-4 rounded-lg">
+                                    <svg class="w-10 h-10" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>X</title><path fill="#FFFFFF" d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.931L18.901 1.153zm-1.8 20.35h2.84L7.058 2.45H3.862l13.24 19.053z"/></svg>
+                                    <div><p class="font-semibold text-lg">X.com (Twitter)</p><p class="text-sm text-slate-400">ติดตามข่าวสารและเรื่องราวต่างๆ</p></div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                 </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="sidebar-overlay"></div>
+    <div id="mobile-menu">
+        <div class="flex flex-col h-full p-4">
+            <div id="user-display-sidebar" class="text-cyan-200 text-xl font-bold p-2 mb-4 border-b border-slate-700"></div>
+            
+            <div class="flex flex-col gap-2">
+                <button onclick="showPage('home')" class="nav-link active w-full text-left px-3 py-3 rounded-md text-lg">หน้าแรก</button>
+                <button onclick="showPage('links')" class="nav-link w-full text-left px-3 py-3 rounded-md text-lg">รวมลิงก์</button>
+                <button onclick="showPage('data')" class="nav-link w-full text-left px-3 py-3 rounded-md text-lg">DATA Center</button>
+                <button onclick="showPage('search')" class="nav-link w-full text-left px-3 py-3 rounded-md text-lg">ค้นหาข้อมูล</button>
+                <button onclick="showPage('game')" class="nav-link w-full text-left px-3 py-3 rounded-md text-lg">เกมงู 🐍 </button>
+                <button onclick="showPage('misc')" class="nav-link w-full text-left px-3 py-3 rounded-md text-lg">อื่นๆ</button>
+                <button onclick="showModal('change-password-modal')" class="nav-link w-full text-left px-3 py-3 rounded-md text-lg">เปลี่ยนรหัสผ่าน</button>
+            </div>
+            
+            <div class="border-t border-slate-700 w-full my-4"></div>
+            <div id="mobile-session-timer" class="text-sm w-full text-left font-mono text-red-400 mb-4"></div>
+            <button onclick="logout()" class="w-full bg-red-600/80 text-white hover:bg-red-500/80 px-4 py-3 rounded-md font-bold text-lg">Logout</button>
+            
+            <a id="report-problem-link" href="mailto:choke16614@gmail.com?subject=รายงานปัญหาเว็บไซต์" class="text-red-400 hover:text-red-300 text-center text-sm p-4">รายงานปัญหา</a>
+        </div>
+    </div>
+    
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+        async function safeFetch(action, data = {}) {
+            const isErrorLogAction = (action === 'logClientError');
+            try {
+                const response = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'cors',
+                    redirect: 'follow',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action, data }),
+                });
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                return await response.json();
+            } catch (error) {
+                console.error('SafeFetch Error:', error);
+                if (!isErrorLogAction) {
+                    const displayName = localStorage.getItem('loggedInUserDisplayName') || 'Anonymous';
+                    safeFetch('logClientError', {
+                        errorMessage: error.message,
+                        stack: error.stack,
+                        user: displayName,
+                        pageUrl: window.location.href
+                    });
+                }
+                return { status: "error", message: "การเชื่อมต่อผิดพลาด กรุณาลองใหม่อีกครั้ง" };
+            }
+        }
+        
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwJZaOBDuEl2JLdBFaCnT7VQYhaxV8ruN8fvpsygHMtD1wcQukE--Ii5bITFJlkto7P/exec";
+        
+        const lockoutConfig = [ { attemptsAllowed: 15, lockDurationMinutes: 0.5 }, { attemptsAllowed: 10, lockDurationMinutes: 5 }, { attemptsAllowed: 3, lockDurationMinutes: 30 }, { attemptsAllowed: 2, lockDurationMinutes: 60 }, { attemptsAllowed: 2, lockDurationMinutes: 120 }, { attemptsAllowed: 2, lockDurationMinutes: 240 }, { attemptsAllowed: 2, lockDurationMinutes: 500 }, { attemptsAllowed: 2, lockDurationMinutes: 1000 }, { attemptsAllowed: 2, lockDurationMinutes: 3000 }, { attemptsAllowed: 1, lockDurationMinutes: 5000 }, { attemptsAllowed: 1, lockDurationMinutes: 10000 }, { attemptsAllowed: 1, lockDurationMinutes: 999999999999999999999999999999999999999999999999999999999999 } ];
+        function formatMinutes(minutes) { if (minutes < 1) return `${Math.round(minutes * 60)} วินาที`; if (minutes < 60) return `${minutes} นาที`; const hours = Math.floor(minutes / 60); const remainingMinutes = minutes % 60; if (remainingMinutes === 0) return `${hours} ชั่วโมง`; return `${hours} ชั่วโมง ${remainingMinutes} นาที`; }
+        function formatTime(ms) { if (ms <= 0) return "0 วินาที"; let s = Math.floor(ms / 1000); let m = Math.floor(s / 60); let h = Math.floor(m / 60); s %= 60; m %= 60; let parts = []; if (h > 0) parts.push(`${h} ชั่วโมง`); if (m > 0) parts.push(`${m} นาที`); if (s > 0) parts.push(`${s} วินาที`); return parts.join(' '); }
+        
+        const starCanvas = document.getElementById('star-canvas'); const starCtx = starCanvas.getContext('2d'); let stars = []; const numStars = 200;
+        function resizeCanvas() { starCanvas.width = window.innerWidth; starCanvas.height = window.innerHeight; }
+        function initStars() { stars = []; for (let i = 0; i < numStars; i++) { stars.push({ x: Math.random() * starCanvas.width, y: Math.random() * starCanvas.height, size: Math.random() * 2 + 0.5, velocity: Math.random() * 0.5 + 0.1, opacity: Math.random(), opacityDirection: Math.random() > 0.5 ? 0.01 : -0.01 }); } }
+        function animateStars() { starCtx.clearRect(0, 0, starCanvas.width, starCanvas.height); stars.forEach(star => { star.y -= star.velocity; if (star.y < 0) { star.y = starCanvas.height; star.x = Math.random() * starCanvas.width; } star.opacity += star.opacityDirection; if (star.opacity > 1 || star.opacity < 0) star.opacityDirection *= -1; starCtx.fillStyle = `rgba(255, 255, 255, ${star.opacity})`; starCtx.beginPath(); starCtx.arc(star.x, star.y, star.size / 2, 0, Math.PI * 2); starCtx.fill(); }); requestAnimationFrame(animateStars); }
+        
+        let loginPlayer, mainPlayer; let isMusicMuted = false;
+        function onYouTubeIframeAPIReady() { loginPlayer = new YT.Player('login-player', { videoId: 'MYPVQccHhAQ', playerVars: { 'autoplay': 1, 'controls': 0, 'loop': 1, 'playlist': 'MYPVQccHhAQ' }, events: { 'onReady': onPlayerReady } }); mainPlayer = new YT.Player('main-player', { videoId: 'xqcC-QRgs78', playerVars: { 'autoplay': 0, 'controls': 0, 'loop': 1, 'playlist': 'xqcC-QRgs78' }, events: { 'onReady': onPlayerReady } }); }
+        function onPlayerReady(event) { if (isMusicMuted) event.target.mute(); else event.target.unMute(); }
+        function toggleMusic() { isMusicMuted = !isMusicMuted; const homeVolumeUpIcon = document.getElementById('home-volume-up-icon'); const homeVolumeOffIcon = document.getElementById('home-volume-off-icon'); const musicStatusText = document.getElementById('music-status-text'); if (isMusicMuted) { if(loginPlayer) loginPlayer.mute(); if(mainPlayer) mainPlayer.mute(); homeVolumeUpIcon.classList.add('hidden'); homeVolumeOffIcon.classList.remove('hidden'); musicStatusText.textContent = 'เปิดเสียง'; } else { if(loginPlayer) loginPlayer.unMute(); if(mainPlayer) mainPlayer.unMute(); homeVolumeUpIcon.classList.remove('hidden'); homeVolumeOffIcon.classList.add('hidden'); musicStatusText.textContent = 'ปิดเสียง'; if (document.getElementById('welcome-page').style.display !== 'none') { if(loginPlayer) loginPlayer.playVideo(); } else { if(mainPlayer) mainPlayer.playVideo(); } } localStorage.setItem('isMusicMuted', isMusicMuted.toString()); }
+        
+        const miscMainGrid = document.getElementById('misc-main-grid'); const miscBackButton = document.getElementById('misc-back-button'); const miscSubpages = document.querySelectorAll('.misc-subpage'); const miscSubpageVideoPlayer = document.getElementById('misc-subpage-video-player');
+        function showMiscSubpage(subpageId) { miscMainGrid.classList.add('hidden'); miscSubpages.forEach(p => p.classList.add('hidden')); document.getElementById(subpageId).classList.remove('hidden'); miscBackButton.classList.remove('hidden'); if (subpageId === 'misc-subpage-video') { miscSubpageVideoPlayer.currentTime = 0; miscSubpageVideoPlayer.play(); } }
+        function hideMiscSubpages() { miscSubpages.forEach(p => p.classList.add('hidden')); miscBackButton.classList.add('hidden'); miscMainGrid.classList.remove('hidden'); miscSubpageVideoPlayer.pause(); }
+        
+        let sessionInterval;
+        function enterMainSite() { document.getElementById('welcome-page').style.display = 'none'; document.getElementById('main-content').classList.remove('hidden'); if(loginPlayer) loginPlayer.stopVideo(); if(!isMusicMuted && mainPlayer) mainPlayer.playVideo(); updateSessionTimer(); sessionInterval = setInterval(updateSessionTimer, 1000); displayLoggedInUser(); }
+        function showPage(pageId) { 
+            hideMiscSubpages(); 
+            document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden')); 
+            document.getElementById(pageId).classList.remove('hidden'); 
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.querySelectorAll(`button[onclick="showPage('${pageId}')"]`).forEach(btn => btn.classList.add('active'));
+            if (pageId === 'game' && typeof game !== 'undefined') { game.restart(); } 
+            
+            const displayName = localStorage.getItem('loggedInUserDisplayName');
+            
+            if (pageId === 'data') {
+                const dataPageContainer = document.getElementById('data');
+                if (displayName === 'Admin') {
+                    loadAdminFolderView();
+                } else {
+                    dataPageContainer.innerHTML = `<div class="glass-card rounded-lg p-8 fade-in"><h2 class="text-3xl font-bold text-center mb-8 text-cyan-300">DATA Center</h2><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"><div onclick="requestData('friends')" class="data-card cursor-pointer glass-card glass-card-hover rounded-lg p-6 text-center flex flex-col items-center justify-center"><svg class="data-card-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg><p class="text-xl font-semibold text-slate-300">Friends Data</p></div><div onclick="requestData('choke')" class="data-card cursor-pointer glass-card glass-card-hover rounded-lg p-6 text-center flex flex-col items-center justify-center"><svg class="data-card-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.75 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg><p class="text-xl font-semibold text-slate-300">Choke's Files</p></div></div></div>`;
+                }
+            }
+            
+            if (pageId === 'search') {
+                const searchPageContainer = document.getElementById('search');
+                if (displayName === 'Admin') {
+                    searchPageContainer.innerHTML = `<div class="glass-card rounded-lg p-8 fade-in text-center"><p class="text-slate-400">กำลังโหลดข้อมูล...</p></div>`;
+                    loadAllUserData();
+                } else {
+                    searchPageContainer.innerHTML = `<div class="glass-card rounded-lg p-8 fade-in text-center"><p class="text-slate-400">คุณไม่มีสิทธิ์เข้าถึงหน้านี้</p></div>`;
+                }
+            }
+            
+            closeMobileMenu();
+        }
+
+        function updateSessionTimer() { const timerDisplay = document.getElementById('session-timer'); const mobileTimerDisplay = document.getElementById('mobile-session-timer'); const loginTimestamp = localStorage.getItem('mainLoginTimestamp'); if (!loginTimestamp) { timerDisplay.textContent = ''; mobileTimerDisplay.textContent = ''; return; } const sevenDays = 7 * 24 * 60 * 60 * 1000; const expirationTime = parseInt(loginTimestamp, 10) + sevenDays; const remainingTime = expirationTime - Date.now(); if (remainingTime <= 0) { const expiredMsg = 'Session หมดอายุ'; timerDisplay.textContent = expiredMsg; mobileTimerDisplay.textContent = expiredMsg; logout(); return; } const days = Math.floor(remainingTime / (1000 * 60 * 60 * 24)); const hours = Math.floor((remainingTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)); const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60)); const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000); const timerString = `หมดอายุ: ${days}d ${hours}h ${minutes}m ${seconds}s`; timerDisplay.textContent = timerString; mobileTimerDisplay.textContent = timerString; }
+        
+        function logout() { 
+            if (confirm("คุณต้องการออกจากระบบจริงๆ ใช่ไหม?")) {
+                const displayName = localStorage.getItem('loggedInUserDisplayName');
+                if (displayName) {
+                    safeFetch('endSession', { displayName: displayName });
+                }
+                localStorage.removeItem('mainLoginTimestamp'); 
+                localStorage.removeItem('loggedInUserDisplayName'); 
+                localStorage.removeItem('friendsLoginTimestamp');
+                localStorage.removeItem('chokeLoginTimestamp');
+                window.location.reload(); 
+            } 
+        }
+
+        function displayLoggedInUser() { const displayName = localStorage.getItem('loggedInUserDisplayName'); if(displayName) { document.getElementById('user-display-header').textContent = displayName; document.getElementById('user-display-sidebar').textContent = displayName; } }
+        
+        function showModal(modalId) { document.getElementById(modalId).classList.add('active'); }
+        function hideModal(modalId) { document.getElementById(modalId).classList.remove('active'); }
+        
+        const mainLoginSystem = { 
+            usernameInput: document.getElementById('main-username-input'), passwordInput: document.getElementById('main-password-input'), submitButton: document.getElementById('main-submit-button'), toggleButton: document.getElementById('main-toggle-password'), messageArea: document.getElementById('message-area'), lockoutInterval: null,
+            init() { this.submitButton.addEventListener('click', () => this.checkPassword()); this.passwordInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') this.checkPassword(); }); this.toggleButton.addEventListener('click', () => this.togglePasswordVisibility()); this.checkInitialLockout(); }, 
+            togglePasswordVisibility() { const type = this.passwordInput.getAttribute('type') === 'password' ? 'text' : 'password'; this.passwordInput.setAttribute('type', type); this.toggleButton.classList.toggle('visible'); }, 
+            async checkPassword() { 
+                const enteredUser = this.usernameInput.value.trim(); const enteredPassword = this.passwordInput.value; 
+                if (enteredUser === '') { this.messageArea.textContent = 'กรุณากรอกชื่อผู้ใช้'; this.messageArea.style.color = '#ff4d4d'; return; } 
+                if (enteredPassword.trim() === '') { this.messageArea.textContent = 'กรุณากรอกรหัสผ่าน'; this.messageArea.style.color = '#ff4d4d'; return; }
+                this.submitButton.disabled = true; this.messageArea.textContent = 'กำลังตรวจสอบ...'; this.messageArea.style.color = '#ccd6f6';
+                const attemptsInStage = parseInt(localStorage.getItem('main_attemptsInStage') || '0');
+                const attemptCount = attemptsInStage + 1;
+                const result = await safeFetch('verifyLogin', { username: enteredUser, password: enteredPassword, attemptCount: attemptCount });
+                if (result.status === "success") this.loginSuccess(result.displayName);
+                else this.handleFailedAttempt(result.message);
+                this.submitButton.disabled = false;
+            }, 
+            loginSuccess(displayName) { localStorage.setItem('mainLoginTimestamp', Date.now()); localStorage.setItem('loggedInUserDisplayName', displayName); localStorage.removeItem('main_lockoutUntil'); localStorage.removeItem('main_lockoutStage'); localStorage.removeItem('main_attemptsInStage'); enterMainSite(); }, 
+            handleFailedAttempt(customMessage) { const prefix = 'main'; this.passwordInput.value = ''; this.messageArea.textContent = customMessage || "ข้อมูลผิดพลาด!"; this.messageArea.style.color = '#ff4d4d'; const keyPrefix = `${prefix}_`; let stage = parseInt(localStorage.getItem(`${keyPrefix}lockoutStage`) || '0'); let attemptsInStage = parseInt(localStorage.getItem(`${keyPrefix}attemptsInStage`) || '0'); attemptsInStage++; const currentStageConfig = lockoutConfig[stage] || lockoutConfig[lockoutConfig.length - 1]; if (attemptsInStage >= currentStageConfig.attemptsAllowed) { const lockoutUntil = Date.now() + (currentStageConfig.lockDurationMinutes * 60 * 1000); stage++; localStorage.setItem(`${keyPrefix}lockoutUntil`, lockoutUntil); localStorage.setItem(`${keyPrefix}lockoutStage`, stage); localStorage.setItem(`${keyPrefix}attemptsInStage`, 0); this.startLockout(lockoutUntil); } else { localStorage.setItem(`${keyPrefix}attemptsInStage`, attemptsInStage); const remaining = currentStageConfig.attemptsAllowed - attemptsInStage; const nextLockoutConfig = lockoutConfig[stage] || lockoutConfig[lockoutConfig.length - 1]; const nextLockoutFormatted = formatMinutes(nextLockoutConfig.lockDurationMinutes); this.messageArea.textContent = `${customMessage || 'ข้อมูลผิดพลาด!'} (เหลือ ${remaining} ครั้ง)`; this.messageArea.style.color = '#ff4d4d'; } }, 
+            startLockout(lockoutUntil) { this.passwordInput.disabled = true; this.usernameInput.disabled = true; this.submitButton.disabled = true; if (this.lockoutInterval) clearInterval(this.lockoutInterval); const update = () => { const remaining = lockoutUntil - Date.now(); if (remaining <= 0) { clearInterval(this.lockoutInterval); this.passwordInput.disabled = false; this.usernameInput.disabled = false; this.submitButton.disabled = false; this.messageArea.textContent = 'กรุณาลองใหม่อีกครั้ง'; this.messageArea.style.color = '#ccd6f6'; localStorage.removeItem('main_lockoutUntil'); } else { this.messageArea.textContent = `ถูกล็อก! กรุณาลองใหม่ใน ${formatTime(remaining)}`; this.messageArea.style.color = '#ff4d4d'; } }; update(); this.lockoutInterval = setInterval(update, 1000); }, 
+            checkInitialLockout() { const lockoutUntil = parseInt(localStorage.getItem('main_lockoutUntil')); if (lockoutUntil && lockoutUntil > Date.now()) { this.startLockout(lockoutUntil); } } 
+        };
+        
+        const dataAccessSystem = { 
+            modal: document.getElementById('data-login-modal'), title: document.getElementById('data-login-title'), usernameInput: document.getElementById('data-username-input'), passwordInput: document.getElementById('data-password-input'), submitButton: document.getElementById('data-submit-button'), toggleButton: document.getElementById('data-toggle-password'), messageArea: document.getElementById('data-message-area'), currentDataType: null, 
+            dataInfo: { friends: { url: "https://drive.google.com/drive/folders/1BfHEMuGuuYt0r4gYtA2vE3hYKN_E-xdu", title: "สำหรับ \"เก็บข้อมูลเพื่อน\"" }, choke: { url: "https://drive.google.com/drive/folders/1aIzOmV-hmpcQhr2vZGZomcSDtoPQ5Qyy", title: "สำหรับ \"เก็บไฟล์โชค\"" } }, 
+            init() { this.submitButton.addEventListener('click', () => this.checkPassword()); this.toggleButton.addEventListener('click', () => this.togglePasswordVisibility()); }, 
+            togglePasswordVisibility() { const type = this.passwordInput.getAttribute('type') === 'password' ? 'text' : 'password'; this.passwordInput.setAttribute('type', type); this.toggleButton.classList.toggle('visible'); }, 
+            requestData(type) { this.currentDataType = type; this.showLogin(); }, 
+            showLogin() { this.title.textContent = this.dataInfo[this.currentDataType].title; this.usernameInput.value = ''; this.passwordInput.value = ''; this.messageArea.textContent = ''; showModal('data-login-modal'); }, 
+            async checkPassword() {
+                const enteredUser = this.usernameInput.value.trim(); const enteredPass = this.passwordInput.value;
+                if (enteredUser === '' || enteredPass === '') { this.messageArea.textContent = 'กรุณากรอกข้อมูลให้ครบ'; this.messageArea.style.color = '#ff4d4d'; return; }
+                this.messageArea.textContent = 'กำลังตรวจสอบ...'; this.messageArea.style.color = '#ccd6f6';
+                const result = await safeFetch('verifyDataCenterLogin', { username: enteredUser, password: enteredPass, dataType: this.currentDataType });
+                if (result.status === "success") this.loginSuccess();
+                else { this.messageArea.textContent = result.message; this.messageArea.style.color = '#ff4d4d'; }
+            },
+            loginSuccess() { window.open(this.dataInfo[this.currentDataType].url, '_blank'); hideModal('data-login-modal'); }
+        };
+        function requestData(type) { dataAccessSystem.requestData(type); }
+        
+        const hamburgerBtn = document.getElementById('hamburger-btn'); const mobileMenu = document.getElementById('mobile-menu'); const sidebarOverlay = document.getElementById('sidebar-overlay');
+        function openMobileMenu() { mobileMenu.classList.add('active'); sidebarOverlay.classList.add('active'); }
+        function closeMobileMenu() { mobileMenu.classList.remove('active'); sidebarOverlay.classList.remove('active'); }
+        hamburgerBtn.addEventListener('click', openMobileMenu); sidebarOverlay.addEventListener('click', closeMobileMenu);
+        function switchAccount() { localStorage.removeItem('mainLoginTimestamp'); localStorage.removeItem('loggedInUserDisplayName'); document.getElementById('welcome-back-content').classList.add('hidden'); document.getElementById('welcome-content-login').classList.remove('hidden'); mainLoginSystem.init(); }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            resizeCanvas(); window.addEventListener('resize', resizeCanvas); initStars(); animateStars();
+            isMusicMuted = localStorage.getItem('isMusicMuted') === 'true';
+            const homeVolumeUpIcon = document.getElementById('home-volume-up-icon'); const homeVolumeOffIcon = document.getElementById('home-volume-off-icon'); const musicStatusText = document.getElementById('music-status-text');
+            if (isMusicMuted) { homeVolumeUpIcon.classList.add('hidden'); homeVolumeOffIcon.classList.remove('hidden'); musicStatusText.textContent = 'เปิดเสียง'; }
+            const mainLoginTimestamp = localStorage.getItem('mainLoginTimestamp'); const displayName = localStorage.getItem('loggedInUserDisplayName'); const sevenDays = 7 * 24 * 60 * 60 * 1000;
+            if (mainLoginTimestamp && displayName && (Date.now() - parseInt(mainLoginTimestamp, 10) < sevenDays)) {
+                document.getElementById('welcome-page').style.display = 'flex'; document.getElementById('welcome-content-login').classList.add('hidden');
+                const welcomeBackDiv = document.getElementById('welcome-back-content'); welcomeBackDiv.classList.remove('hidden');
+                document.getElementById('welcome-back-username').textContent = displayName;
+            } else {
+                document.getElementById('welcome-page').style.display = 'flex'; document.getElementById('welcome-content-login').classList.remove('hidden'); document.getElementById('welcome-back-content').classList.add('hidden');
+                mainLoginSystem.init();
+            }
+            dataAccessSystem.init(); game.init(); passwordChanger.init();
+        });
+        
+        async function loadAdminFolderView() {
+            const dataPageContainer = document.getElementById('data');
+            dataPageContainer.innerHTML = `<div class="glass-card rounded-lg p-8 fade-in text-center"><p class="text-slate-400">กำลังโหลดรายชื่อโฟลเดอร์...</p></div>`;
+            const result = await safeFetch('getFolderStructure', { displayName: 'Admin' });
+            if (result.status === 'success' && result.data) {
+                let html = `<div class="glass-card rounded-lg p-8 fade-in"><h2 class="text-3xl font-bold text-center mb-8 text-cyan-300">Admin Data Access</h2><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">`;
+                result.data.sort((a, b) => a.folderName.localeCompare(b.folderName)).forEach(folder => {
+                    html += `<a href="${folder.folderUrl}" target="_blank" class="glass-card glass-card-hover p-4 flex items-center gap-4 rounded-lg"><span class="text-2xl">📂</span><span class="font-semibold">${folder.folderName}</span></a>`;
+                });
+                html += `</div></div>`;
+                dataPageContainer.innerHTML = html;
+            } else {
+                dataPageContainer.innerHTML = `<div class="glass-card rounded-lg p-8 fade-in text-center"><p class="text-red-400">${result.message || 'ไม่สามารถโหลดข้อมูลโฟลเดอร์ได้'}</p></div>`;
+            }
+        }
+
+        async function loadAllUserData() {
+            const searchPageContainer = document.getElementById('search');
+            const result = await safeFetch('getAllUserData', { displayName: 'Admin' });
+            if (result.status === 'success' && result.data) {
+                searchPageContainer.innerHTML = ''; 
+                const sortedUsers = Object.keys(result.data).sort();
+                for (const user of sortedUsers) {
+                    const logs = result.data[user];
+                    const userSection = document.createElement('div');
+                    userSection.className = 'glass-card rounded-lg p-6 mb-8 fade-in';
+                    let tableHTML = `<h2 class="text-2xl font-bold mb-4 text-cyan-300">${user}</h2>`;
+                    if(logs.length > 0) {
+                        tableHTML += `<div class="overflow-x-auto"><table class="w-full text-left text-sm"><thead class="bg-slate-800 text-cyan-300"><tr><th class="p-2">Timestamp</th><th class="p-2">Log Type</th><th class="p-2">Details</th></tr></thead><tbody>`;
+                        logs.slice().reverse().forEach(log => {
+                            tableHTML += `<tr class="border-b border-slate-700 hover:bg-slate-800/50"><td class="p-2 whitespace-nowrap">${log.timestamp}</td><td class="p-2 font-semibold ${log.logType.includes('SECURITY') ? 'text-red-400' : 'text-slate-300'}">${log.logType}</td><td class="p-2 whitespace-pre-wrap">${log.details}</td></tr>`;
+                        });
+                        tableHTML += `</tbody></table></div>`;
+                    } else {
+                        tableHTML += `<p class="text-slate-400">ไม่พบข้อมูล Log สำหรับผู้ใช้นี้</p>`;
+                    }
+                    userSection.innerHTML = tableHTML;
+                    searchPageContainer.appendChild(userSection);
+                }
+                const uploadSection = document.createElement('div');
+                uploadSection.className = 'glass-card rounded-lg p-6 mt-8 fade-in';
+                let formHTML = `<h2 class="text-2xl font-bold mb-4 text-cyan-300">Admin File Upload</h2><p class="text-sm text-slate-400 mb-4">อัปโหลดไฟล์ไปยังโฟลเดอร์ของผู้ใช้</p>
+                                <form action="${APPS_SCRIPT_URL}" method="post" enctype="multipart/form-data" target="_blank">
+                                    <input type="hidden" name="action" value="uploadFileForUser"><input type="hidden" name="adminDisplayName" value="Admin">
+                                    <div class="mb-4"><label for="targetUser" class="block mb-2 text-sm font-medium text-cyan-200">เลือกผู้ใช้เป้าหมาย:</label><select name="targetUserDisplayName" id="targetUser" class="bg-slate-800 border border-slate-600 text-white text-sm rounded-lg block w-full p-2.5">`;
+                if (result.users) {
+                    result.users.sort().forEach(user => formHTML += `<option value="${user}">${user}</option>`);
+                }
+                formHTML += `</select></div><div class="mb-4"><label for="fileUpload" class="block mb-2 text-sm font-medium text-cyan-200">เลือกไฟล์:</label><input type="file" name="theFile" id="fileUpload" class="block w-full text-sm text-slate-300 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-cyan-500/20 file:text-cyan-300 hover:file:bg-cyan-500/30" required></div>
+                             <button type="submit" class="w-full form-button font-bold py-3 px-8 rounded-lg text-lg transition-transform duration-300 hover:scale-105">Upload File</button></form>`;
+                uploadSection.innerHTML = formHTML;
+                searchPageContainer.appendChild(uploadSection);
+            } else {
+                searchPageContainer.innerHTML = `<div class="glass-card rounded-lg p-8 fade-in text-center"><h2 class="text-3xl font-bold mb-8 text-cyan-300">เกิดข้อผิดพลาด</h2><p class="text-red-400">${result.message || 'ไม่สามารถโหลดข้อมูลได้'}</p></div>`;
+            }
+        }
+        
+        const game = (function () {
+            var canv, ctx; const INITIAL_TAIL = 4; var fixedTail = false; var intervalID; var tileCount = 20; var gridSize; const INITIAL_PLAYER = { x: Math.floor(tileCount / 2), y: Math.floor(tileCount / 2) }; var velocity = { x: 0, y: 0 }; var player = { x: INITIAL_PLAYER.x, y: INITIAL_PLAYER.y }; var walls = false; var fruit = { x: 1, y: 1 }; var trail = []; var tail = INITIAL_TAIL; var points = 0; var particles = []; var ActionEnum = { 'none': 0, 'up': 1, 'down': 2, 'left': 3, 'right': 4 }; Object.freeze(ActionEnum); var lastAction = ActionEnum.none; var isPaused = true; let pointsMax = 0, playsCount = 0, lossesCount = 0;
+            function updateStatsDisplay() { document.getElementById('high-score-display').textContent = pointsMax; document.getElementById('plays-display').textContent = playsCount; document.getElementById('losses-display').textContent = lossesCount; }
+            function loadStats() { pointsMax = parseInt(localStorage.getItem('snake_high_score') || '0'); playsCount = parseInt(localStorage.getItem('snake_plays') || '0'); lossesCount = parseInt(localStorage.getItem('snake_losses') || '0'); updateStatsDisplay(); }
+            function resetGame() { if (!isPaused && (velocity.x !== 0 || velocity.y !== 0)) { lossesCount++; localStorage.setItem('snake_losses', lossesCount); } updateStatsDisplay(); tail = INITIAL_TAIL; points = 0; velocity.x = 0; velocity.y = 0; player.x = INITIAL_PLAYER.x; player.y = INITIAL_PLAYER.y; lastAction = ActionEnum.none; trail = []; trail.push({ x: player.x, y: player.y }); isPaused = true; randomFruit(); }
+            function randomFruit() { fruit.x = Math.floor(Math.random() * tileCount); fruit.y = Math.floor(Math.random() * tileCount); for(var i=0; i<trail.length; i++) { if (trail[i].x == fruit.x && trail[i].y == fruit.y) { randomFruit(); return; } } }
+            function createParticles(x, y) { for (let i = 0; i < 15; i++) { particles.push({ x: x, y: y, vx: (Math.random() - 0.5) * 3, vy: (Math.random() - 0.5) * 3, alpha: 1 }); } }
+            function loop() { if (!canv) return; gridSize = canv.width / tileCount; if (!isPaused) { player.x += velocity.x; player.y += velocity.y; if (velocity.x == 0 && velocity.y == -1) lastAction = ActionEnum.up; if (velocity.x == 0 && velocity.y == 1) lastAction = ActionEnum.down; if (velocity.x == -1 && velocity.y == 0) lastAction = ActionEnum.left; if (velocity.x == 1 && velocity.y == 0) lastAction = ActionEnum.right; if (player.x < 0) player.x = tileCount - 1; if (player.x >= tileCount) player.x = 0; if (player.y < 0) player.y = tileCount - 1; if (player.y >= tileCount) player.y = 0; for (var i = 0; i < trail.length; i++) { if (trail[i].x == player.x && trail[i].y == player.y) { resetGame(); break; } } trail.push({ x: player.x, y: player.y }); while (trail.length > tail) trail.shift(); if (player.x == fruit.x && fruit.y == player.y) { if (!fixedTail) tail++; points++; if (points > pointsMax) { pointsMax = points; localStorage.setItem('snake_high_score', pointsMax); } updateStatsDisplay(); createParticles(fruit.x * gridSize + gridSize / 2, fruit.y * gridSize + gridSize / 2); randomFruit(); } } ctx.fillStyle = '#0f172a'; ctx.fillRect(0, 0, canv.width, canv.height); ctx.strokeStyle = 'rgba(100, 255, 218, 0.1)'; ctx.lineWidth = 1; for (let i = 1; i < tileCount; i++) { ctx.beginPath(); ctx.moveTo(i * gridSize, 0); ctx.lineTo(i * gridSize, canv.height); ctx.stroke(); } for (let i = 1; i < tileCount; i++) { ctx.beginPath(); ctx.moveTo(0, i * gridSize); ctx.lineTo(canv.width, i * gridSize); ctx.stroke(); } particles.forEach((p, index) => { p.x += p.vx; p.y += p.vy; p.alpha -= 0.04; if (p.alpha <= 0) { particles.splice(index, 1); } else { ctx.fillStyle = `rgba(255, 255, 0, ${p.alpha})`; ctx.beginPath(); ctx.arc(p.x, p.y, gridSize/10, 0, Math.PI * 2); ctx.fill(); } }); for (var i = 0; i < trail.length; i++) { ctx.fillStyle = (i === trail.length - 1) ? '#88ffed' : '#64ffda'; ctx.fillRect(trail[i].x * gridSize + 1, trail[i].y * gridSize + 1, gridSize - 2, gridSize - 2); if (i === trail.length - 1) { ctx.fillStyle = 'black'; const eyeSize = gridSize / 8; if (lastAction === ActionEnum.up) { ctx.fillRect(trail[i].x * gridSize + eyeSize*2, trail[i].y * gridSize + eyeSize*2, eyeSize, eyeSize); ctx.fillRect(trail[i].x * gridSize + eyeSize*5, trail[i].y * gridSize + eyeSize*2, eyeSize, eyeSize); } else if (lastAction === ActionEnum.down) { ctx.fillRect(trail[i].x * gridSize + eyeSize*2, trail[i].y * gridSize + eyeSize*5, eyeSize, eyeSize); ctx.fillRect(trail[i].x * gridSize + eyeSize*5, trail[i].y * gridSize + eyeSize*5, eyeSize, eyeSize); } else if (lastAction === ActionEnum.left) { ctx.fillRect(trail[i].x * gridSize + eyeSize*2, trail[i].y * gridSize + eyeSize*2, eyeSize, eyeSize); ctx.fillRect(trail[i].x * gridSize + eyeSize*2, trail[i].y * gridSize + eyeSize*5, eyeSize, eyeSize); } else { ctx.fillRect(trail[i].x * gridSize + eyeSize*5, trail[i].y * gridSize + eyeSize*2, eyeSize, eyeSize); ctx.fillRect(trail[i].x * gridSize + eyeSize*5, trail[i].y * gridSize + eyeSize*5, eyeSize, eyeSize); } } } const fruitYOffset = Math.sin(Date.now() / 200) * (gridSize / 10); ctx.font = `${gridSize}px serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('🐁', fruit.x * gridSize + gridSize / 2, fruit.y * gridSize + gridSize / 2 + fruitYOffset); ctx.fillStyle = '#ccd6f6'; ctx.font = `bold ${gridSize * 0.8}px Kanit`; ctx.textAlign = 'left'; ctx.fillText("คะแนน: " + points, 10, gridSize); if (isPaused) { ctx.fillStyle = 'rgba(10, 25, 47, 0.7)'; ctx.fillRect(0, 0, canv.width, canv.height); ctx.fillStyle = '#64ffda'; ctx.font = `bold ${gridSize*1.5}px Kanit`; ctx.textAlign = 'center'; ctx.fillText('กดปุ่มลูกศรเพื่อเริ่ม', canv.width/2, canv.height/2); } }
+            function keyPush(evt) { switch(evt.keyCode) { case 37: action('left'); evt.preventDefault(); break; case 38: action('up'); evt.preventDefault(); break; case 39: action('right'); evt.preventDefault(); break; case 40: action('down'); evt.preventDefault(); break; case 27: resetGame(); evt.preventDefault(); break; } }
+            function action(direction) { if (isPaused && (velocity.x === 0 && velocity.y === 0)) { isPaused = false; const plays = parseInt(localStorage.getItem('snake_plays') || '0') + 1; localStorage.setItem('snake_plays', plays); playsCount = plays; updateStatsDisplay(); } switch(direction) { case 'up': if (lastAction != ActionEnum.down) { velocity.x = 0; velocity.y = -1; } break; case 'down': if (lastAction != ActionEnum.up) { velocity.x = 0; velocity.y = 1; } break; case 'left': if (lastAction != ActionEnum.right) { velocity.x = -1, velocity.y = 0; } break; case 'right': if (lastAction != ActionEnum.left) { velocity.x = 1, velocity.y = 0; } break; } }
+            return { init: function () { canv = document.getElementById('game-canvas'); if (canv) { ctx = canv.getContext('2d'); document.addEventListener('keydown', keyPush); loadStats(); resetGame(); intervalID = setInterval(loop, 1000 / 12); } }, restart: resetGame, action: action, setDirection: action };
+        })();
+        
+        const passwordChanger = {
+            currentPassInput: document.getElementById('current-password-input'), newPassInput: document.getElementById('new-password-input'), confirmPassInput: document.getElementById('confirm-password-input'), submitButton: document.getElementById('change-pass-submit-button'), messageArea: document.getElementById('change-pass-message-area'), valLength: document.getElementById('pass-val-length'), valLetter: document.getElementById('pass-val-letter'), valMatch: document.getElementById('pass-val-match'),
+            init() { this.submitButton.addEventListener('click', () => this.submitChange()); this.newPassInput.addEventListener('input', () => this.validateNewPassword()); this.confirmPassInput.addEventListener('input', () => this.validateNewPassword()); },
+            validateNewPassword() { const newPass = this.newPassInput.value; const confirmPass = this.confirmPassInput.value; let isLengthValid = false, isLetterValid = false, isMatchValid = false; if (newPass.length >= 8) { this.valLength.style.color = '#64ffda'; isLengthValid = true; } else { this.valLength.style.color = '#f87171'; isLengthValid = false; } if ((newPass.match(/[a-zA-Z]/g) || []).length >= 2) { this.valLetter.style.color = '#64ffda'; isLetterValid = true; } else { this.valLetter.style.color = '#f87171'; isLetterValid = false; } if (newPass && newPass === confirmPass) { this.valMatch.style.color = '#64ffda'; isMatchValid = true; } else { this.valMatch.style.color = '#f87171'; isMatchValid = false; } this.submitButton.disabled = !(isLengthValid && isLetterValid && isMatchValid); return (isLengthValid && isLetterValid && isMatchValid); },
+            async submitChange() {
+                if (!this.validateNewPassword()) return;
+                const displayName = localStorage.getItem('loggedInUserDisplayName');
+                if (!displayName) { this.messageArea.textContent = 'ไม่พบข้อมูลผู้ใช้'; this.messageArea.style.color = '#ff4d4d'; return; }
+                this.submitButton.disabled = true; this.messageArea.textContent = 'กำลังดำเนินการ...'; this.messageArea.style.color = '#ccd6f6';
+                const data = { displayName: displayName, currentPassword: this.currentPassInput.value, newPassword: this.newPassInput.value };
+                const result = await safeFetch('changeChange', data);
+                if (result.status === "success") {
+                    this.messageArea.textContent = result.message; this.messageArea.style.color = '#64ffda';
+                    setTimeout(() => { hideModal('change-password-modal'); this.currentPassInput.value = ''; this.newPassInput.value = ''; this.confirmPassInput.value = ''; }, 2000);
+                } else { this.messageArea.textContent = result.message; this.messageArea.style.color = '#ff4d4d'; }
+                this.submitButton.disabled = false;
+            }
+        };
+    </script>
+</body>
+</html>
