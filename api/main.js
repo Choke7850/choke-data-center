@@ -8,24 +8,32 @@ const hashPassword = (password) => {
 };
 
 const getDoc = async () => {
-  // Ensure environment variables are loaded
-  if (!process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL || !process.env.GOOGLE_PRIVATE_KEY || !process.env.GOOGLE_SHEET_ID) {
-    throw new Error("Missing Google credentials in environment variables.");
-  }
+  console.log("Attempting to initialize Google Auth...");
+
+  // Detailed check for environment variables
+  if (!process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL) throw new Error("ERROR: GOOGLE_SERVICE_ACCOUNT_EMAIL is missing.");
+  if (!process.env.GOOGLE_PRIVATE_KEY) throw new Error("ERROR: GOOGLE_PRIVATE_KEY is missing.");
+  if (!process.env.GOOGLE_SHEET_ID) throw new Error("ERROR: GOOGLE_SHEET_ID is missing.");
+  
+  console.log("All environment variables found. Creating JWT...");
+
   const serviceAccountAuth = new JWT({
     email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
     key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
     scopes: ['https://www.googleapis.com/auth/spreadsheets'],
   });
+
+  console.log("JWT created. Connecting to Google Spreadsheet...");
+  
   const doc = new GoogleSpreadsheet(process.env.GOOGLE_SHEET_ID, serviceAccountAuth);
   await doc.loadInfo();
+  
+  console.log("Successfully connected to spreadsheet:", doc.title);
   return doc;
 };
 
 // --- Main Handler for Vercel ---
 module.exports = async (request, response) => {
-  // --- CORS Headers ---
-  response.setHeader('Access-Control-Allow-Credentials', true);
   response.setHeader('Access-Control-Allow-Origin', '*');
   response.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   response.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -34,7 +42,6 @@ module.exports = async (request, response) => {
     return response.status(200).end();
   }
   
-  // --- Main Logic ---
   const { action, data } = request.body;
 
   try {
@@ -43,7 +50,9 @@ module.exports = async (request, response) => {
     switch (action) {
       case 'verifyLogin': {
         const userSheet = doc.sheetsByTitle['users'];
-        await userSheet.loadHeaderRow(); // Ensure headers are loaded
+        if (!userSheet) throw new Error("Sheet 'users' not found.");
+        
+        await userSheet.loadHeaderRow();
         const rows = await userSheet.getRows();
         const inputPasswordHash = hashPassword(data.password);
 
@@ -55,14 +64,12 @@ module.exports = async (request, response) => {
         
         return response.status(200).json({ status: 'error', message: 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง' });
       }
-      
-      // ... (เคสอื่นๆ สามารถแปลงมาใส่ตรงนี้ได้ในลักษณะเดียวกัน) ...
-
+      // ... Other cases can be added here ...
       default:
         return response.status(400).json({ status: 'error', message: 'Invalid action' });
     }
   } catch (error) {
-    console.error("Handler Error:", error);
+    console.error("!!! CRITICAL HANDLER ERROR !!!:", error);
     return response.status(500).json({ status: 'error', message: 'Server Error: ' + error.message });
   }
 };
