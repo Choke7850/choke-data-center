@@ -348,7 +348,7 @@
             }
         }
         
-        const APPS_SCRIPT_URL = "https://choke-data-center-new.vercel.app/api/main";
+        const APPS_SCRIPT_URL = "https://choke-data-center.vercel.app/api/main";
         
         const lockoutConfig = [ { attemptsAllowed: 15, lockDurationMinutes: 0.5 }, { attemptsAllowed: 10, lockDurationMinutes: 5 }, { attemptsAllowed: 3, lockDurationMinutes: 30 }, { attemptsAllowed: 2, lockDurationMinutes: 60 }, { attemptsAllowed: 2, lockDurationMinutes: 120 }, { attemptsAllowed: 2, lockDurationMinutes: 240 }, { attemptsAllowed: 2, lockDurationMinutes: 500 }, { attemptsAllowed: 2, lockDurationMinutes: 1000 }, { attemptsAllowed: 2, lockDurationMinutes: 3000 }, { attemptsAllowed: 1, lockDurationMinutes: 5000 }, { attemptsAllowed: 1, lockDurationMinutes: 10000 }, { attemptsAllowed: 1, lockDurationMinutes: 999999999999999999999999999999999999999999999999999999999999 } ];
         function formatMinutes(minutes) { if (minutes < 1) return `${Math.round(minutes * 60)} วินาที`; if (minutes < 60) return `${minutes} นาที`; const hours = Math.floor(minutes / 60); const remainingMinutes = minutes % 60; if (remainingMinutes === 0) return `${hours} ชั่วโมง`; return `${hours} ชั่วโมง ${remainingMinutes} นาที`; }
