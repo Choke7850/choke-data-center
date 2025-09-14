@@ -8,32 +8,23 @@ const hashPassword = (password) => {
 };
 
 const getDoc = async () => {
-  console.log("Attempting to initialize Google Auth...");
-
-  // Detailed check for environment variables
-  if (!process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL) throw new Error("ERROR: GOOGLE_SERVICE_ACCOUNT_EMAIL is missing.");
-  if (!process.env.GOOGLE_PRIVATE_KEY) throw new Error("ERROR: GOOGLE_PRIVATE_KEY is missing.");
-  if (!process.env.GOOGLE_SHEET_ID) throw new Error("ERROR: GOOGLE_SHEET_ID is missing.");
-  
-  console.log("All environment variables found. Creating JWT...");
+  // [FIX] This new key processing method is more robust.
+  const privateKey = process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n');
 
   const serviceAccountAuth = new JWT({
     email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-    key: JSON.parse(`"${process.env.GOOGLE_PRIVATE_KEY}"`),
+    key: privateKey,
     scopes: ['https://www.googleapis.com/auth/spreadsheets'],
   });
-
-  console.log("JWT created. Connecting to Google Spreadsheet...");
   
   const doc = new GoogleSpreadsheet(process.env.GOOGLE_SHEET_ID, serviceAccountAuth);
   await doc.loadInfo();
-  
-  console.log("Successfully connected to spreadsheet:", doc.title);
   return doc;
 };
 
 // --- Main Handler for Vercel ---
 module.exports = async (request, response) => {
+  // CORS Headers
   response.setHeader('Access-Control-Allow-Origin', '*');
   response.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   response.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -50,7 +41,7 @@ module.exports = async (request, response) => {
     switch (action) {
       case 'verifyLogin': {
         const userSheet = doc.sheetsByTitle['users'];
-        if (!userSheet) throw new Error("Sheet 'users' not found.");
+        if (!userSheet) throw new Error("Sheet 'users' not found in the document.");
         
         await userSheet.loadHeaderRow();
         const rows = await userSheet.getRows();
@@ -64,7 +55,7 @@ module.exports = async (request, response) => {
         
         return response.status(200).json({ status: 'error', message: 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง' });
       }
-      // ... Other cases can be added here ...
+      // Other cases can be added here
       default:
         return response.status(400).json({ status: 'error', message: 'Invalid action' });
     }
