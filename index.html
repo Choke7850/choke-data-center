@@ -593,5 +593,54 @@
             }
         };
     </script>
+
+
+    <!-- [NEW] Bypass Login Button -->
+
+<head>
+    <style>
+        /* ... (ส่วน style เหมือนเดิม) ... */
+    </style>
+</head>
+<body class="min-h-screen">
+    <div id="welcome-page">
+        <div class="login-container glass-card p-8 rounded-lg text-center">
+            <div id="welcome-content-login" class="hidden">
+                 <h1 class="text-3xl font-bold text-cyan-300 mb-6">กรุณาเข้าสู่ระบบ</h1>
+                 <div class="input-group">
+                    <input type="text" id="main-username-input" class="username-input" required placeholder=" " autocomplete="username">
+                    <label for="main-username-input">ชื่อผู้ใช้</label>
+                 </div>
+                 <div class="input-group">
+                    <input type="password" id="main-password-input" class="password-input" required placeholder=" " autocomplete="current-password">
+                    <label for="main-password-input">*รหัสผ่าน</label>
+                 </div>
+                 <p id="message-area" class="my-4"></p>
+                 <button id="main-submit-button" class="w-full form-button font-bold py-3 px-8 rounded-lg text-lg">Login</button>
+                 
+                 <button onclick="bypassLogin()" class="w-full mt-4 bg-slate-600 text-white font-bold py-2 px-4 rounded-lg text-sm">
+                    ข้ามการล็อกอิน (สำหรับนักพัฒนา)
+                 </button>
+                 </div>
+        </div>
+    </div>
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+        // ... (โค้ด JavaScript ส่วนบนเหมือนเดิม) ...
+
+        // ========== [ใหม่] ฟังก์ชันสำหรับ Bypass Login ==========
+        function bypassLogin() {
+            // ตั้งค่าให้เหมือนว่าล็อกอินเป็น Admin สำเร็จแล้ว
+            localStorage.setItem('loggedInUserDisplayName', 'Admin_Bypass');
+            localStorage.setItem('mainLoginTimestamp', Date.now());
+            // เรียกฟังก์ชันเพื่อเข้าสู่หน้าหลัก
+            enterMainSite();
+        }
+        // ========== [จบส่วนใหม่] ==========
+
+        // ... (โค้ด JavaScript ที่เหลือทั้งหมดเหมือนเดิม) ...
+    </script>
+</body>
+
 </body>
 </html>
