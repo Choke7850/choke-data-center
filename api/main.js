@@ -46,15 +46,6 @@ module.exports = async (request, response) => {
         }
         return response.status(200).json({ status: 'error', message: 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง' });
       }
-
-      // --- [ใหม่] Action สำหรับทดสอบการเชื่อมต่อ ---
-      case 'testSheetConnection': {
-        const userSheet = doc.sheetsByTitle['users'];
-        if (!userSheet) throw new Error("Sheet 'users' not found.");
-        const rowCount = userSheet.rowCount;
-        return response.status(200).json({ status: 'success', message: `Successfully connected to sheet '${doc.title}' and found sheet 'users' with ${rowCount} rows.` });
-      }
-
       default:
         return response.status(400).json({ status: 'error', message: 'Invalid action' });
     }
