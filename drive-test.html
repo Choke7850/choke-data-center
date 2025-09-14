@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Drive Connection Test</title>
+    <style>body{font-family:sans-serif;background-color:#1e1e1e;color:white;padding:20px;text-align:center;}button{font-size:18px;padding:12px 24px;cursor:pointer;}#result{margin-top:20px;font-size:20px;font-weight:bold;}</style>
+</head>
+<body>
+    <h1>Google Drive Connection Test</h1>
+    <p>กดปุ่มเพื่อสั่งให้ Back-End สร้างโฟลเดอร์ทดสอบใน Google Drive</p>
+    <button onclick="runTest()">Run Drive Test</button>
+    <p id="result">Result will appear here...</p>
+
+    <script>
+        // [สำคัญ] นี่คือ URL ของไฟล์ทดสอบตัวใหม่
+        const API_URL = "https://choke-data-center.vercel.app/api/test-drive";
+
+        async function runTest() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerText = "กำลังทดสอบ...";
+            resultDiv.style.color = 'white';
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    mode: 'cors'
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.status === 'success') {
+                    resultDiv.innerText = `✅ สำเร็จ! - ${result.message}`;
+                    resultDiv.style.color = '#33ff99';
+                } else {
+                    throw new Error(result.message || 'Unknown error');
+                }
+            } catch (error) {
+                resultDiv.innerText = `❌ ล้มเหลว! - ${error.message}`;
+                resultDiv.style.color = '#ff4d4d';
+            }
+        }
+    </script>
+</body>
+</html>
