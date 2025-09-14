@@ -321,6 +321,7 @@
     
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
+        // --- Safe Fetch Function for API Calls with Error Logging ---
         async function safeFetch(action, data = {}) {
             const isErrorLogAction = (action === 'logClientError');
             try {
@@ -331,7 +332,9 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ action, data }),
                 });
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
                 return await response.json();
             } catch (error) {
                 console.error('SafeFetch Error:', error);
@@ -347,29 +350,43 @@
                 return { status: "error", message: "การเชื่อมต่อผิดพลาด กรุณาลองใหม่อีกครั้ง" };
             }
         }
-        
+
+        // --- [IMPORTANT] REPLACE THIS URL WITH YOUR NEW WEB APP URL ---
         const APPS_SCRIPT_URL = "https://choke-data-center.vercel.app/api/main";
-        
+
+        // --- Shared Lockout Logic ---
         const lockoutConfig = [ { attemptsAllowed: 15, lockDurationMinutes: 0.5 }, { attemptsAllowed: 10, lockDurationMinutes: 5 }, { attemptsAllowed: 3, lockDurationMinutes: 30 }, { attemptsAllowed: 2, lockDurationMinutes: 60 }, { attemptsAllowed: 2, lockDurationMinutes: 120 }, { attemptsAllowed: 2, lockDurationMinutes: 240 }, { attemptsAllowed: 2, lockDurationMinutes: 500 }, { attemptsAllowed: 2, lockDurationMinutes: 1000 }, { attemptsAllowed: 2, lockDurationMinutes: 3000 }, { attemptsAllowed: 1, lockDurationMinutes: 5000 }, { attemptsAllowed: 1, lockDurationMinutes: 10000 }, { attemptsAllowed: 1, lockDurationMinutes: 999999999999999999999999999999999999999999999999999999999999 } ];
         function formatMinutes(minutes) { if (minutes < 1) return `${Math.round(minutes * 60)} วินาที`; if (minutes < 60) return `${minutes} นาที`; const hours = Math.floor(minutes / 60); const remainingMinutes = minutes % 60; if (remainingMinutes === 0) return `${hours} ชั่วโมง`; return `${hours} ชั่วโมง ${remainingMinutes} นาที`; }
         function formatTime(ms) { if (ms <= 0) return "0 วินาที"; let s = Math.floor(ms / 1000); let m = Math.floor(s / 60); let h = Math.floor(m / 60); s %= 60; m %= 60; let parts = []; if (h > 0) parts.push(`${h} ชั่วโมง`); if (m > 0) parts.push(`${m} นาที`); if (s > 0) parts.push(`${s} วินาที`); return parts.join(' '); }
-        
-        const starCanvas = document.getElementById('star-canvas'); const starCtx = starCanvas.getContext('2d'); let stars = []; const numStars = 200;
+
+        // --- Animated Stars Background ---
+        const starCanvas = document.getElementById('star-canvas');
+        const starCtx = starCanvas.getContext('2d');
+        let stars = [];
+        const numStars = 200;
         function resizeCanvas() { starCanvas.width = window.innerWidth; starCanvas.height = window.innerHeight; }
         function initStars() { stars = []; for (let i = 0; i < numStars; i++) { stars.push({ x: Math.random() * starCanvas.width, y: Math.random() * starCanvas.height, size: Math.random() * 2 + 0.5, velocity: Math.random() * 0.5 + 0.1, opacity: Math.random(), opacityDirection: Math.random() > 0.5 ? 0.01 : -0.01 }); } }
         function animateStars() { starCtx.clearRect(0, 0, starCanvas.width, starCanvas.height); stars.forEach(star => { star.y -= star.velocity; if (star.y < 0) { star.y = starCanvas.height; star.x = Math.random() * starCanvas.width; } star.opacity += star.opacityDirection; if (star.opacity > 1 || star.opacity < 0) star.opacityDirection *= -1; starCtx.fillStyle = `rgba(255, 255, 255, ${star.opacity})`; starCtx.beginPath(); starCtx.arc(star.x, star.y, star.size / 2, 0, Math.PI * 2); starCtx.fill(); }); requestAnimationFrame(animateStars); }
-        
-        let loginPlayer, mainPlayer; let isMusicMuted = false;
+
+        // --- Music Player System ---
+        let loginPlayer, mainPlayer;
+        let isMusicMuted = false;
         function onYouTubeIframeAPIReady() { loginPlayer = new YT.Player('login-player', { videoId: 'MYPVQccHhAQ', playerVars: { 'autoplay': 1, 'controls': 0, 'loop': 1, 'playlist': 'MYPVQccHhAQ' }, events: { 'onReady': onPlayerReady } }); mainPlayer = new YT.Player('main-player', { videoId: 'xqcC-QRgs78', playerVars: { 'autoplay': 0, 'controls': 0, 'loop': 1, 'playlist': 'xqcC-QRgs78' }, events: { 'onReady': onPlayerReady } }); }
         function onPlayerReady(event) { if (isMusicMuted) event.target.mute(); else event.target.unMute(); }
         function toggleMusic() { isMusicMuted = !isMusicMuted; const homeVolumeUpIcon = document.getElementById('home-volume-up-icon'); const homeVolumeOffIcon = document.getElementById('home-volume-off-icon'); const musicStatusText = document.getElementById('music-status-text'); if (isMusicMuted) { if(loginPlayer) loginPlayer.mute(); if(mainPlayer) mainPlayer.mute(); homeVolumeUpIcon.classList.add('hidden'); homeVolumeOffIcon.classList.remove('hidden'); musicStatusText.textContent = 'เปิดเสียง'; } else { if(loginPlayer) loginPlayer.unMute(); if(mainPlayer) mainPlayer.unMute(); homeVolumeUpIcon.classList.remove('hidden'); homeVolumeOffIcon.classList.add('hidden'); musicStatusText.textContent = 'ปิดเสียง'; if (document.getElementById('welcome-page').style.display !== 'none') { if(loginPlayer) loginPlayer.playVideo(); } else { if(mainPlayer) mainPlayer.playVideo(); } } localStorage.setItem('isMusicMuted', isMusicMuted.toString()); }
-        
-        const miscMainGrid = document.getElementById('misc-main-grid'); const miscBackButton = document.getElementById('misc-back-button'); const miscSubpages = document.querySelectorAll('.misc-subpage'); const miscSubpageVideoPlayer = document.getElementById('misc-subpage-video-player');
+
+        // --- Misc Page Sub-navigation ---
+        const miscMainGrid = document.getElementById('misc-main-grid');
+        const miscBackButton = document.getElementById('misc-back-button');
+        const miscSubpages = document.querySelectorAll('.misc-subpage');
+        const miscSubpageVideoPlayer = document.getElementById('misc-subpage-video-player');
         function showMiscSubpage(subpageId) { miscMainGrid.classList.add('hidden'); miscSubpages.forEach(p => p.classList.add('hidden')); document.getElementById(subpageId).classList.remove('hidden'); miscBackButton.classList.remove('hidden'); if (subpageId === 'misc-subpage-video') { miscSubpageVideoPlayer.currentTime = 0; miscSubpageVideoPlayer.play(); } }
         function hideMiscSubpages() { miscSubpages.forEach(p => p.classList.add('hidden')); miscBackButton.classList.add('hidden'); miscMainGrid.classList.remove('hidden'); miscSubpageVideoPlayer.pause(); }
-        
+
+        // --- Page Navigation & Session Timer ---
         let sessionInterval;
         function enterMainSite() { document.getElementById('welcome-page').style.display = 'none'; document.getElementById('main-content').classList.remove('hidden'); if(loginPlayer) loginPlayer.stopVideo(); if(!isMusicMuted && mainPlayer) mainPlayer.playVideo(); updateSessionTimer(); sessionInterval = setInterval(updateSessionTimer, 1000); displayLoggedInUser(); }
+        
         function showPage(pageId) { 
             hideMiscSubpages(); 
             document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden')); 
@@ -567,7 +584,7 @@
                 if (!displayName) { this.messageArea.textContent = 'ไม่พบข้อมูลผู้ใช้'; this.messageArea.style.color = '#ff4d4d'; return; }
                 this.submitButton.disabled = true; this.messageArea.textContent = 'กำลังดำเนินการ...'; this.messageArea.style.color = '#ccd6f6';
                 const data = { displayName: displayName, currentPassword: this.currentPassInput.value, newPassword: this.newPassInput.value };
-                const result = await safeFetch('changeChange', data);
+                const result = await safeFetch('changePassword', data);
                 if (result.status === "success") {
                     this.messageArea.textContent = result.message; this.messageArea.style.color = '#64ffda';
                     setTimeout(() => { hideModal('change-password-modal'); this.currentPassInput.value = ''; this.newPassInput.value = ''; this.confirmPassInput.value = ''; }, 2000);
